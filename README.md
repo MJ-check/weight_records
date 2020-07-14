@@ -1,5 +1,7 @@
 # 体重记录应用程序
 
+nodejs + Express + MySQL
+
 ## 安装依赖
 
 ```shell
