@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体重数据</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    #container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    #title {
+      width: 100%;
+      font-size: larger;
+      font-weight: bolder;
+    }
+    #time-title {
+      margin-right: 130px;
+    }
+    #data-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    #data-container div {
+      margin-top: 15px;
+    }
+    .weight-data {
+      position: absolute;
+      left: 175px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="title">
+      <span id="time-title">日期</span>
+      <span id="weight-title">体重(kg)</span>
+    </div>
+    <div id="data-container"></div>
+  </div>
+
+  <script>
+    var data_container = document.getElementById("data-container");
+    window.onload = () => {
+      fetch("/api/data", {
+        method: "GET"
+      })
+      .then(res => res.json())
+      .then(res => {
+        const status = res.status;
+        if (status === "fail") {
+          alert("数据获取失败！");
+        } else {
+          const data = res.data;
+          data_container.innerHTML = "";
+          data.forEach((item) => {
+            var new_line = document.createElement("div");
+            new_line.innerHTML = "<span>" + item.time + "</span>" 
+              + "<span class=\"weight-data\">" + item.weight + "</span>";
+            data_container.appendChild(new_line);
+          });
+        }
+      })
+      .catch(err => console.log(err));
+    }
+  </script>
+</body>
+</html>

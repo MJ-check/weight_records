@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体重记录</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    .container {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: large;
+      border: 1px dotted black;
+    }
+    @media screen and (min-width: 600px) {
+      .container {
+        width: 50%;
+        height: 50%;
+        top: 25%;
+        left: 25%;
+      }
+      .time-to-show {
+        font-size: large;
+      }
+    }
+    @media screen and (max-width: 600px) {
+      .container {
+        width: 80%;
+        height: 50%;
+        top: 25%;
+        left: 10%;
+      }
+      .time-to-show {
+        font-size: medium;
+      }
+    }
+    #input-number, #submit-button {
+      margin-top: 50px;
+    }
+    #input-number {
+      width: 70%;
+      height: 30px;
+      font-size: 20px;
+    }
+    #submit-button {
+      width: 100px;
+      height: 30px;
+    }
+    .foot {
+      position: absolute;
+      width: 100%;
+      bottom: 50px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="time-to-show">时间：<span id="show-time"></span></div>
+    <input type="number" id="input-number"/>
+    <button type="button" id="submit-button">保存上传</button>
+  </div>
+  <div>
+    <a href="/data" class="foot">点击查看数据</a>
+  </div>
+  
+  <script>
+    var input_number = document.getElementById("input-number");
+    var submit_button = document.getElementById("submit-button");
+    var show_time = document.getElementById("show-time");
+    window.onload = () => {
+      submit_button.addEventListener("click", () => {
+        const weight = input_number.value;
+        const now_time = new Date();
+        const time_string = ""
+        + now_time.getFullYear() + "-"
+        + now_time.getMonth() + "-"
+        + now_time.getDate() + " "
+        + now_time.getHours() + ":"
+        + now_time.getMinutes() + ":"
+        + now_time.getSeconds();
+        show_time.innerHTML = time_string;
+        const data = {
+          weight: weight,
+          time: time_string
+        };
+        fetch("/api/post", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: new Headers({
+            "Content-Type": "application/json"
+          })
+        }).then(res => res.json())
+        .then(res => {
+          const status = res.status;
+          if (status === "fail") {
+            alert("数据传输失败！");
+          } else {
+            alert("数据传输成功！");
+          }
+        })
+        .catch(err => console.log(err));
+      });
+    }
+  </script>
+</body>
+</html>
